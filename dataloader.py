@@ -33,8 +33,10 @@ def load_data(data_loader='', filename='TNM.wfl', names=('A', 'B', 'C', 'D'),
     except FileNotFoundError:
         data = pd.read_table('TNM.wfl', delim_whitespace=True,
                              names=names)
-        train_data, test_data = _create_dataloader(data)
-        if standardize:
+        if not standardize:
+            train_data, test_data = _create_dataloader(data,
+                                                       batch_size=batch_size)
+        else:
             scaler = Normalizer()
             # Take all columns exluding the first one
             fitted = scaler.fit_transform(data.T)
@@ -42,7 +44,8 @@ def load_data(data_loader='', filename='TNM.wfl', names=('A', 'B', 'C', 'D'),
             # returns a numpy array which is reshaped into a DataFrame
             fitted = pd.DataFrame(fitted.T, columns=names)
             # Concatenation with the first column
-            train_data, test_data = _create_dataloader(fitted)
+            train_data, test_data = _create_dataloader(fitted,
+                                                       batch_size=batch_size)
             if save:
                 torch.save('dataloader.pt', {
                            'train_loader': train_data,
