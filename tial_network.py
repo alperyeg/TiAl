@@ -70,12 +70,12 @@ def train(net, epoch, train_loader, batch_size):
     train_loss = 0
     for idx, (img, target) in enumerate(train_loader):
         if img.size() != (batch_size, 3):
-            break
+            continue
         optimizer.zero_grad()
         # network prediction for the image
         output = net(img[:, :2])
         # calculate the loss
-        loss = loss_decision(output, target, img[:, 2], 
+        loss = loss_decision(output, target, img[:, 2],
                              LossFunctions.customLossFunction)
         # backprop
         loss.backward()
@@ -100,10 +100,10 @@ def test(net, epoch, test_loader, batch_size):
     with torch.no_grad():
         for idx, (img, target) in enumerate(test_loader):
             if img.size() != (batch_size, 3):
-                break
+                continue
             output = net(img[:, :2])
             epsilon = img[:, 2]
-            loss = loss_decision(output, target, epsilon, 
+            loss = loss_decision(output, target, epsilon,
                                  LossFunctions.customLossFunction)
             test_loss += loss.item()
             # network prediction
